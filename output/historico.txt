@@ -1,0 +1,1 @@
+CPF: 12345678909 | Tempo: 0.38 | Energia: 0.14 | Valor: 0.57

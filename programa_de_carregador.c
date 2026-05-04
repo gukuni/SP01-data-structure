@@ -2,6 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h> 
 
 int main() {
 
@@ -30,6 +31,9 @@ int main() {
     float saldo_usuario = 50.0;
 
     float capacidade_bateria = 50.0;
+
+    float porcentagem_inicial = 0;
+    float porcentagem_final = 0;
 
     printf("     CHARGERID INTELLIGENCE - GOODWE\n");
 
@@ -76,11 +80,21 @@ int main() {
     if (tipo_recarga == 1) {
         printf("Tempo desejado (min): ");
         scanf("%f", &meta_tempo);
+
     } else if (tipo_recarga == 2) {
         printf("Energia desejada (kWh): ");
         scanf("%f", &meta_energia);
+
     } else {
-        meta_energia = capacidade_bateria; 
+        printf("Informe a porcentagem atual da bateria (0 a 100): ");
+        scanf("%f", &porcentagem_inicial);
+
+        while (porcentagem_inicial < 0 || porcentagem_inicial > 100) {
+            printf("Valor invalido! Digite entre 0 e 100: ");
+            scanf("%f", &porcentagem_inicial);
+        }
+
+        meta_energia = capacidade_bateria * (1 - porcentagem_inicial / 100);
     }
 
     if (carregador_livre == 1 && veiculo_conectado == 1) {
@@ -98,31 +112,72 @@ int main() {
         printf("Potencia: %.1f kW\n", potencia_kw);
         printf("Horario: %s\n", horario);
 
-        
-        if (tipo_recarga == 3) {
-            printf("\nModo 100%% ativo.\n");
-            printf("O carregamento ira ate completar a bateria.\n");
-            
-
-        }
-
     } else {
         printf("\nNao foi possivel iniciar.\n");
         return 0;
     }
 
-    printf("\nPressione ENTER para encerrar a recarga...\n");
-    getchar();
-    getchar();
-
-    fim = time(NULL);
-
-    segundos_usados = difftime(fim, inicio);
-    minutos_usados = segundos_usados / 60;
-
-    energia_total = potencia_kw * (minutos_usados / 60);
-
     
+    if (tipo_recarga == 3) {
+
+        time_t ultimo_tempo = time(NULL);
+
+        printf("\nCarregando... (pressione ENTER para cancelar)\n");
+
+        while (1) {
+
+            time_t agora = time(NULL);
+
+            if (agora != ultimo_tempo) {
+
+                ultimo_tempo = agora;
+
+                segundos_usados = difftime(agora, inicio);
+                minutos_usados = segundos_usados / 60;
+
+                energia_total = potencia_kw * (minutos_usados / 60);
+
+                porcentagem_final = porcentagem_inicial +
+                    (energia_total / capacidade_bateria) * 100;
+
+                if (porcentagem_final > 100) {
+                    porcentagem_final = 100;
+                }
+
+                printf("Bateria: %.2f%%\r", porcentagem_final);
+
+                
+                if (kbhit()) {
+                    char tecla = getch();
+
+                    if (tecla == 13) {
+                        printf("\n\nRecarga interrompida pelo usuario!\n");
+                        break;
+                    }
+                }
+
+                if (porcentagem_final >= 100) {
+                    printf("\n\nBateria atingiu 100%% automaticamente!\n");
+                    break;
+                }
+            }
+        }
+
+        fim = time(NULL);
+
+    } else {
+
+        printf("\nPressione ENTER para encerrar a recarga...\n");
+        getchar();
+        getchar();
+
+        fim = time(NULL);
+
+        segundos_usados = difftime(fim, inicio);
+        minutos_usados = segundos_usados / 60;
+        energia_total = potencia_kw * (minutos_usados / 60);
+    }
+
     if (energia_total > capacidade_bateria) {
         energia_total = capacidade_bateria;
     }
@@ -132,8 +187,10 @@ int main() {
     printf("\nSESSAO FINALIZADA!\n");
     printf("Tempo: %.2f minutos\n", minutos_usados);
     printf("Energia: %.2f kWh\n", energia_total);
+    printf("Bateria final: %.2f%%\n", porcentagem_final);
     printf("Valor: R$ %.2f\n", total);
 
+    
     printf("\n----PAGAMENTO----\n");
     printf("Valor total: R$ %.2f\n", total);
 
@@ -149,24 +206,19 @@ int main() {
     }
 
     if (forma_pagamento == 1) {
-
         printf("\nPagamento aprovado no cartao!\n");
 
     } else if (forma_pagamento == 2) {
-
         printf("\nPagamento via Pix realizado com sucesso!\n");
 
     } else if (forma_pagamento == 3) {
 
         if (saldo_usuario >= total) {
-
             saldo_usuario -= total;
-
             printf("\nPagamento realizado com saldo!\n");
             printf("Saldo restante: R$ %.2f\n", saldo_usuario);
 
         } else {
-
             printf("\nSaldo insuficiente!\n");
 
             do {
@@ -174,29 +226,10 @@ int main() {
                 scanf("%d", &forma_pagamento);
             } while (forma_pagamento != 1 && forma_pagamento != 2);
 
-            if (forma_pagamento == 1) {
+            if (forma_pagamento == 1)
                 printf("\nPagamento aprovado no cartao!\n");
-            } else {
+            else
                 printf("\nPagamento via Pix realizado com sucesso!\n");
-            }
-        }
-    }
-
-    if (tipo_recarga == 1 && minutos_usados >= meta_tempo) {
-        printf("Meta de tempo atingida.\n");
-    }
-
-    if (tipo_recarga == 2 && energia_total >= meta_energia) {
-        printf("Meta de energia atingida.\n");
-    }
-
-    
-    if (tipo_recarga == 3) {
-
-        if (energia_total >= capacidade_bateria) {
-            printf("Carga completa (100%% atingido).\n");
-        } else {
-            printf("Recarga interrompida antes de atingir 100%%.\n");
         }
     }
 
