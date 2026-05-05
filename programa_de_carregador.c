@@ -52,7 +52,7 @@ int main() {
     
     printf("\n1 carregador - CCS2 (50kW - 350 kW)\n");
     printf("2 carregador- AC (7kW - 22kW)\n");
-    printf("3 carregador- CHAdeMO (50Kw - 50kW)\n");
+    printf("3 carregador- CHAdeMO (50KW - 50kW)\n");
     scanf("%d", &carregador);
 
     while (carregador < 1 || carregador > 3) {
@@ -182,7 +182,18 @@ int main() {
     printf("\n\nSESSAO FINALIZADA\n");
     printf("Tempo: %.2f minutos\n", minutos_usados);
     printf("Energia: %.2f kWh\n", energia_total);
-    printf("Bateria final: %.2f%%\n", porcentagem_final);
+
+    if (tipo_recarga == 3) {
+
+        printf("Bateria inicial: %.2f%%\n", porcentagem_inicial);
+        printf("Bateria final: %.2f%%\n", porcentagem_final);
+
+        printf("Carga adicionada: %.2f%%\n",
+            (energia_total / capacidade_bateria) * 100);
+    } else {
+        printf("Equivalente carregado: %.2f%%\n", porcentagem_final);
+    }
+
     printf("Valor: R$ %.2f\n", total);
 
     FILE *arquivo = fopen("historico.txt", "a");

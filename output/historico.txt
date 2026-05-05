@@ -6,3 +6,7 @@ CPF: 12345678909 | Tempo: 0.10 | Energia: 0.04 | Valor: 0.15
 CPF: 12345678909 | Tempo: 0.03 | Energia: 0.06 | Valor: 0.05
 CPF: 12345678909 | Tempo: 0.15 | Energia: 0.05 | Valor: 0.22
 CPF: 12345678909 | Tempo: 0.30 | Energia: 1.00 | Valor: 0.45
+CPF: 12345678909 | Tempo: 0.05 | Energia: 0.01 | Valor: 0.08
+CPF: 12345678909 | Tempo: 0.05 | Energia: 0.01 | Valor: 0.08
+CPF: 12345678909 | Tempo: 0.67 | Energia: 0.08 | Valor: 1.00
+CPF: 12345678909 | Tempo: 0.22 | Energia: 0.03 | Valor: 0.32
