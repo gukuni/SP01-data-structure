@@ -37,7 +37,6 @@ int main() {
 
     printf("     CHARGERID INTELLIGENCE - GOODWE\n");
 
-    
     while (1) {
         printf("Informe seu CPF: ");
         scanf("%s", cpf_motorista);
@@ -46,18 +45,18 @@ int main() {
         printf("CPF invalido!\n\n");
     }
 
-    printf("Informe a capacidade da bateria (kWh): ");
-    scanf("%f", &capacidade_bateria);
+    do {
+        printf("Informe a capacidade da bateria (kWh): ");
+        scanf("%f", &capacidade_bateria);
+    } while (capacidade_bateria <= 0);
 
-    
     printf("\n1 carregador - CCS2 (50kW - 350 kW)\n");
     printf("2 carregador- AC (7kW - 22kW)\n");
     printf("3 carregador- CHAdeMO (50KW - 50kW)\n");
-    scanf("%d", &carregador);
 
-    while (carregador < 1 || carregador > 3) {
+    while (scanf("%d", &carregador) != 1 || carregador < 1 || carregador > 3) {
         printf("Numero invalido!\n");
-        scanf("%d", &carregador);
+        while (getchar() != '\n');
     }
 
     if (carregador == 1) {
@@ -147,7 +146,7 @@ int main() {
 
             if (porcentagem_final > 100) porcentagem_final = 100;
 
-            printf("Bateria: %.2f%% | Tempo: %.1f min | Energia: %.2f kWh\r",
+            printf("\rBateria: %6.2f%% | Tempo: %6.1f min | Energia: %6.2f kWh   ",
                    porcentagem_final, minutos_usados, energia_total);
 
             if (kbhit()) {
@@ -190,7 +189,9 @@ int main() {
 
         printf("Carga adicionada: %.2f%%\n",
             (energia_total / capacidade_bateria) * 100);
+
     } else {
+
         printf("Equivalente carregado: %.2f%%\n", porcentagem_final);
     }
 
@@ -203,57 +204,55 @@ int main() {
         fclose(arquivo);
     }
 
-   printf("\n----PAGAMENTO----\n");
-printf("Valor total: R$ %.2f\n", total);
+    printf("\n----PAGAMENTO----\n");
+    printf("Valor total: R$ %.2f\n", total);
 
-printf("\nEscolha a forma de pagamento:\n");
-printf("1 - Cartao de credito\n");
-printf("2 - Pix\n");
-printf("3 - Saldo na carteira\n");
+    printf("\nEscolha a forma de pagamento:\n");
+    printf("1 - Cartao de credito\n");
+    printf("2 - Pix\n");
+    printf("3 - Saldo na carteira\n");
 
+    while (scanf("%d", &forma_pagamento) != 1 || forma_pagamento < 1 || forma_pagamento > 3) {
+        printf("Opcao invalida! Escolha 1, 2 ou 3: ");
+        while (getchar() != '\n');
+    }
 
-while (scanf("%d", &forma_pagamento) != 1 || forma_pagamento < 1 || forma_pagamento > 3) {
-    printf("Opcao invalida! Escolha 1, 2 ou 3: ");
-    while (getchar() != '\n'); 
-}
+    switch (forma_pagamento) {
 
-switch (forma_pagamento) {
+        case 1:
+            printf("\nPagamento aprovado no cartao!\n");
+            break;
 
-    case 1:
-        printf("\nPagamento aprovado no cartao!\n");
-        break;
+        case 2:
+            printf("\nPagamento via Pix realizado com sucesso!\n");
+            break;
 
-    case 2:
-        printf("\nPagamento via Pix realizado com sucesso!\n");
-        break;
+        case 3:
 
-    case 3:
+            if (saldo_usuario >= total) {
 
-        if (saldo_usuario >= total) {
+                saldo_usuario -= total;
 
-            saldo_usuario -= total;
+                printf("\nPagamento realizado com saldo!\n");
+                printf("Saldo restante: R$ %.2f\n", saldo_usuario);
 
-            printf("\nPagamento realizado com saldo!\n");
-            printf("Saldo restante: R$ %.2f\n", saldo_usuario);
-
-        } else {
-
-            printf("\nSaldo insuficiente!\n");
-
-            
-            do {
-                printf("Escolha outra forma (1=Cartao, 2=Pix): ");
-            } while (scanf("%d", &forma_pagamento) != 1 ||
-                     (forma_pagamento != 1 && forma_pagamento != 2));
-
-            if (forma_pagamento == 1) {
-                printf("\nPagamento aprovado no cartao!\n");
             } else {
-                printf("\nPagamento via Pix realizado com sucesso!\n");
-            }
-        }
 
-        break;
-}
+                printf("\nSaldo insuficiente!\n");
+
+                do {
+                    printf("Escolha outra forma (1=Cartao, 2=Pix): ");
+                } while (scanf("%d", &forma_pagamento) != 1 ||
+                         (forma_pagamento != 1 && forma_pagamento != 2));
+
+                if (forma_pagamento == 1)
+                    printf("\nPagamento aprovado no cartao!\n");
+                else
+                    printf("\nPagamento via Pix realizado com sucesso!\n");
+            }
+
+            break;
+    }
+
     return 0;
 }
